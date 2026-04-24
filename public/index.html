@@ -196,6 +196,47 @@ body {
 .auto-refresh-all:hover { background: var(--mint-dark); }
 .auto-refresh-all:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* WEIGHT SLIDERS */
+.weight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.weight-item {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.weight-label {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--text);
+  margin-bottom: 10px;
+}
+.weight-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; font-weight: 700;
+  color: var(--mint); min-width: 40px; text-align: right;
+}
+.weight-slider {
+  width: 100%; height: 5px;
+  background: linear-gradient(to right, var(--border), var(--border));
+  border-radius: 3px; outline: none; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+}
+.weight-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--mint); cursor: pointer;
+  box-shadow: 0 0 6px rgba(78,205,196,0.5);
+  border: 2px solid #0f1419;
+}
+.weight-slider::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--mint); cursor: pointer;
+  border: 2px solid #0f1419;
+}
+
 /* HISTORY SECTION */
 .history-section {
   background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
@@ -706,6 +747,57 @@ body {
   </button>
 </div>
 
+<!-- WEIGHT SETTINGS -->
+<div class="card" style="padding: 16px 20px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="toggleWeightPanel()">
+    <div class="card-title" style="margin-bottom:0;">
+      🎛️ 점수 가중치 설정 <span id="weight-current" style="margin-left:8px;color:var(--text-dim);font-size:11px;font-weight:400;font-family:'JetBrains Mono',monospace;text-transform:none;letter-spacing:0;">(VIX 20% · F&G 30% · RSI 50%)</span>
+    </div>
+    <span id="weight-toggle-icon" style="color:var(--text-dim);font-size:14px;">▼</span>
+  </div>
+  
+  <div id="weight-panel" style="display:none;margin-top:16px;">
+    <div class="card-subtitle" style="margin-top:0;">사용자 취향에 맞게 각 지표의 중요도를 조절하세요. 합계가 자동 정규화됩니다.</div>
+    
+    <div class="weight-grid">
+      <div class="weight-item">
+        <div class="weight-label">
+          <span>📊 VIX (변동성)</span>
+          <span class="weight-value" id="weight-vix-value">20%</span>
+        </div>
+        <input type="range" class="weight-slider" id="weight-vix" min="0" max="100" value="20">
+      </div>
+      <div class="weight-item">
+        <div class="weight-label">
+          <span>😱 공포탐욕지수</span>
+          <span class="weight-value" id="weight-fg-value">30%</span>
+        </div>
+        <input type="range" class="weight-slider" id="weight-fg" min="0" max="100" value="30">
+      </div>
+      <div class="weight-item">
+        <div class="weight-label">
+          <span>📈 종목 RSI</span>
+          <span class="weight-value" id="weight-rsi-value">50%</span>
+        </div>
+        <input type="range" class="weight-slider" id="weight-rsi" min="0" max="100" value="50">
+      </div>
+    </div>
+    
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:10px;">
+      <div style="font-size:12px;color:var(--text-dim);">
+        <span>합계: </span><b id="weight-sum" style="color:var(--mint);">100%</b>
+        <span style="margin-left:12px;color:var(--text-mute);">정규화되어 적용됨</span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn-ghost btn" onclick="applyWeightPreset(20,30,50)" style="padding:6px 12px;font-size:11px;">🎯 기본 (20/30/50)</button>
+        <button class="btn-ghost btn" onclick="applyWeightPreset(30,40,30)" style="padding:6px 12px;font-size:11px;">🌊 매크로</button>
+        <button class="btn-ghost btn" onclick="applyWeightPreset(10,20,70)" style="padding:6px 12px;font-size:11px;">📈 종목</button>
+        <button class="btn-ghost btn" onclick="applyWeightPreset(33,33,34)" style="padding:6px 12px;font-size:11px;">⚖️ 균형</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- HISTORY SECTION -->
 <div class="history-section" id="history-section">
   <div class="history-header">
@@ -866,8 +958,72 @@ body {
 <!-- GUIDE -->
 <div class="card">
   <div class="card-title">9단계 매수/익절 가이드</div>
-  <div class="card-subtitle">종합점수 = VIX점수×20% + F&G점수×30% + RSI점수×50%</div>
+  <div class="card-subtitle">종합점수 = (VIX × <span id="guide-w-vix">20</span>% + F&G × <span id="guide-w-fg">30</span>% + RSI × <span id="guide-w-rsi">50</span>%) / 100</div>
   <div class="guide-grid" id="guide-grid"></div>
+  
+  <!-- 역사적 참고 사례 -->
+  <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+    <div style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--mint);">📚 역사적 사례로 보는 종합점수 (기본 가중치 기준)</div>
+    <div style="overflow-x:auto;">
+      <table class="ticker-table" style="min-width:auto;">
+        <thead>
+          <tr>
+            <th>상황</th>
+            <th class="num">VIX</th>
+            <th class="num">F&G</th>
+            <th class="num">RSI</th>
+            <th class="num">점수</th>
+            <th>신호</th>
+          </tr>
+        </thead>
+        <tbody style="font-size:12px;">
+          <tr>
+            <td>2008 리먼 파산</td>
+            <td class="num mono">80</td>
+            <td class="num mono">12</td>
+            <td class="num mono">20</td>
+            <td class="num"><span class="score-pill" style="background:rgba(81,207,102,0.18);color:#51cf66;">96</span></td>
+            <td><span style="color:#51cf66;">🔥 극한공포 매수</span></td>
+          </tr>
+          <tr>
+            <td>2020 코로나 쇼크</td>
+            <td class="num mono">75</td>
+            <td class="num mono">5</td>
+            <td class="num mono">15</td>
+            <td class="num"><span class="score-pill" style="background:rgba(81,207,102,0.18);color:#51cf66;">99</span></td>
+            <td><span style="color:#51cf66;">🔥 극한공포 매수</span></td>
+          </tr>
+          <tr>
+            <td>2022 레고랜드 사태</td>
+            <td class="num mono">32</td>
+            <td class="num mono">22</td>
+            <td class="num mono">28</td>
+            <td class="num"><span class="score-pill" style="background:rgba(81,207,102,0.1);color:#8ce99a;">76</span></td>
+            <td><span style="color:#8ce99a;">🟢 매수</span></td>
+          </tr>
+          <tr>
+            <td>평상시 (2024년 대부분)</td>
+            <td class="num mono">17</td>
+            <td class="num mono">55</td>
+            <td class="num mono">55</td>
+            <td class="num"><span class="score-pill" style="background:rgba(244,196,48,0.1);color:#f4c430;">47</span></td>
+            <td><span style="color:#f4c430;">🟡 중립 관망</span></td>
+          </tr>
+          <tr>
+            <td>2021 밈주식 광풍</td>
+            <td class="num mono">11</td>
+            <td class="num mono">82</td>
+            <td class="num mono">78</td>
+            <td class="num"><span class="score-pill" style="background:rgba(255,107,107,0.15);color:#ff6b6b;">15</span></td>
+            <td><span style="color:#ff6b6b;">🔴 강력익절</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:var(--text-mute);margin-top:8px;">
+      💡 과거 사례와 비슷한 점수가 나오면 해당 구간의 전략을 참고하세요. 연속 함수 기반이라 동일 점수 ≒ 동일 시장 상태.
+    </div>
+  </div>
 </div>
 
 <!-- TTOKJAE F&G MODAL -->
@@ -956,6 +1112,7 @@ const DEFAULT_STATE = {
   tickers: [],
   'fg-momentum': null, 'fg-vkospi': null, 'fg-rsi': null,
   'fg-foreign': null, 'fg-highlow': null,
+  weightVix: 20, weightFg: 30, weightRsi: 50,  // 사용자 가중치 (기본값)
 };
 
 let state = { ...DEFAULT_STATE };
@@ -1245,18 +1402,180 @@ function setupAutocomplete() {
 }
 
 // ============================================================
-// SCORING
+// SCORING (v4: 연속 함수 + 사용자 가중치)
 // ============================================================
-function vixScore(v) { if (v==null||isNaN(v)) return null; return v>=40?100:v>=30?80:v>=25?65:v>=20?50:v>=15?35:15; }
-function fgScore(f) { if (f==null||isNaN(f)) return null; return f<=20?100:f<=30?85:f<=45?65:f<=55?50:f<=70?35:f<=80?15:0; }
-function rsiScore(r) { if (r==null||isNaN(r)) return null; return r<25?100:r<30?90:r<40?70:r<50?55:r<60?40:r<70?25:r<75?10:0; }
+
+// 선형 보간 함수 - 구간별로 부드러운 점수 변환
+function linearMap(value, points) {
+  // points = [[x1, y1], [x2, y2], ...] 형태 (x 오름차순)
+  if (value == null || isNaN(value)) return null;
+  if (value <= points[0][0]) return points[0][1];
+  if (value >= points[points.length - 1][0]) return points[points.length - 1][1];
+  
+  for (let i = 0; i < points.length - 1; i++) {
+    const [x1, y1] = points[i];
+    const [x2, y2] = points[i + 1];
+    if (value >= x1 && value <= x2) {
+      const ratio = (value - x1) / (x2 - x1);
+      return y1 + (y2 - y1) * ratio;
+    }
+  }
+  return null;
+}
+
+// VIX 점수 (연속 함수)
+// 10 이하(극안정) → 0점 / 20(평균) → 30점 / 30(공포) → 60점 / 50+(극공포) → 100점
+function vixScore(v) {
+  if (v == null || isNaN(v)) return null;
+  const score = linearMap(v, [
+    [10, 0],    // 극안정 (탐욕)
+    [15, 12],
+    [20, 30],   // 평균
+    [25, 45],
+    [30, 60],   // 공포 진입
+    [40, 80],   // 강한 공포
+    [50, 100],  // 극공포
+  ]);
+  return Math.round(score);
+}
+
+// 공포탐욕지수 점수 (연속 함수)
+// 0(극공포) → 100점 / 50(중립) → 50점 / 100(극탐욕) → 0점
+function fgScore(f) {
+  if (f == null || isNaN(f)) return null;
+  const score = linearMap(f, [
+    [0, 100],   // 극공포
+    [10, 90],
+    [25, 70],
+    [50, 50],   // 중립
+    [75, 25],
+    [90, 5],
+    [100, 0],   // 극탐욕
+  ]);
+  return Math.round(score);
+}
+
+// RSI 점수 (연속 함수)
+// 0~20(극과매도) → 100점 / 50(중립) → 50점 / 80+(극과매수) → 0점
+function rsiScore(r) {
+  if (r == null || isNaN(r)) return null;
+  const score = linearMap(r, [
+    [0, 100],   // 극과매도
+    [20, 100],
+    [25, 85],
+    [30, 75],   // 과매도 기준선
+    [40, 60],
+    [50, 50],   // 중립
+    [60, 40],
+    [70, 25],   // 과매수 기준선
+    [80, 10],
+    [85, 0],
+    [100, 0],   // 극과매수
+  ]);
+  return Math.round(score);
+}
+
+// 사용자 가중치 조회 (기본 20/30/50)
+function getWeights() {
+  return {
+    vix: state.weightVix ?? 20,
+    fg: state.weightFg ?? 30,
+    rsi: state.weightRsi ?? 50,
+  };
+}
 
 function compositeScore(group, rsi) {
   const vix = group === 'kr' ? state.vkospi : state.vix;
   const fg = group === 'kr' ? state['kospi-fg'] : state['cnn-fg'];
   const vs = vixScore(vix), fs = fgScore(fg), rs = rsiScore(rsi);
-  if (vs==null||fs==null||rs==null) return null;
-  return Math.round(vs * 0.2 + fs * 0.3 + rs * 0.5);
+  if (vs == null || fs == null || rs == null) return null;
+  const w = getWeights();
+  const total = w.vix + w.fg + w.rsi;
+  if (total === 0) return null;
+  // 합계가 100이 아니어도 비율대로 정규화
+  return Math.round((vs * w.vix + fs * w.fg + rs * w.rsi) / total);
+}
+
+// 점수 상세 (각 요소별 기여도 반환)
+function compositeScoreDetail(group, rsi) {
+  const vix = group === 'kr' ? state.vkospi : state.vix;
+  const fg = group === 'kr' ? state['kospi-fg'] : state['cnn-fg'];
+  const vs = vixScore(vix), fs = fgScore(fg), rs = rsiScore(rsi);
+  const w = getWeights();
+  const total = w.vix + w.fg + w.rsi;
+  if (vs == null || fs == null || rs == null || total === 0) return null;
+  
+  return {
+    vix: { raw: vix, score: vs, weight: w.vix, contribution: (vs * w.vix / total) },
+    fg: { raw: fg, score: fs, weight: w.fg, contribution: (fs * w.fg / total) },
+    rsi: { raw: rsi, score: rs, weight: w.rsi, contribution: (rs * w.rsi / total) },
+    total: Math.round((vs * w.vix + fs * w.fg + rs * w.rsi) / total),
+  };
+}
+
+// ============================================================
+// WEIGHT CONTROL
+// ============================================================
+function toggleWeightPanel() {
+  const panel = document.getElementById('weight-panel');
+  const icon = document.getElementById('weight-toggle-icon');
+  const isHidden = panel.style.display === 'none';
+  panel.style.display = isHidden ? 'block' : 'none';
+  icon.textContent = isHidden ? '▲' : '▼';
+}
+window.toggleWeightPanel = toggleWeightPanel;
+
+function updateWeightDisplay() {
+  const w = getWeights();
+  document.getElementById('weight-vix-value').textContent = w.vix + '%';
+  document.getElementById('weight-fg-value').textContent = w.fg + '%';
+  document.getElementById('weight-rsi-value').textContent = w.rsi + '%';
+  document.getElementById('weight-vix').value = w.vix;
+  document.getElementById('weight-fg').value = w.fg;
+  document.getElementById('weight-rsi').value = w.rsi;
+  
+  const sum = w.vix + w.fg + w.rsi;
+  const sumEl = document.getElementById('weight-sum');
+  sumEl.textContent = sum + '%';
+  sumEl.style.color = sum === 100 ? 'var(--mint)' : 'var(--gold)';
+  
+  // 헤더 요약 업데이트
+  document.getElementById('weight-current').textContent = 
+    `(VIX ${w.vix}% · F&G ${w.fg}% · RSI ${w.rsi}%)`;
+  
+  // 가이드 섹션 가중치 표시 업데이트
+  const gwVix = document.getElementById('guide-w-vix');
+  const gwFg = document.getElementById('guide-w-fg');
+  const gwRsi = document.getElementById('guide-w-rsi');
+  if (gwVix) gwVix.textContent = w.vix;
+  if (gwFg) gwFg.textContent = w.fg;
+  if (gwRsi) gwRsi.textContent = w.rsi;
+}
+
+function applyWeightPreset(vix, fg, rsi) {
+  state.weightVix = vix;
+  state.weightFg = fg;
+  state.weightRsi = rsi;
+  saveState();
+  updateWeightDisplay();
+  renderGroups();
+  showToast(`가중치 적용: ${vix}/${fg}/${rsi}`);
+}
+window.applyWeightPreset = applyWeightPreset;
+
+function setupWeightSliders() {
+  ['vix', 'fg', 'rsi'].forEach(key => {
+    const slider = document.getElementById('weight-' + key);
+    slider.addEventListener('input', () => {
+      const val = parseInt(slider.value);
+      if (key === 'vix') state.weightVix = val;
+      else if (key === 'fg') state.weightFg = val;
+      else if (key === 'rsi') state.weightRsi = val;
+      saveState();
+      updateWeightDisplay();
+      renderGroups();
+    });
+  });
 }
 
 const TIERS = [
@@ -2279,6 +2598,10 @@ document.getElementById('save-snapshot-btn').addEventListener('click', manualSav
 document.getElementById('compare-mode-btn').addEventListener('click', toggleCompareMode);
 document.getElementById('export-csv-btn').addEventListener('click', exportCSV);
 document.getElementById('clear-history-btn').addEventListener('click', clearHistory);
+
+// Weight sliders
+setupWeightSliders();
+updateWeightDisplay();
 
 // Autocomplete
 setupAutocomplete();
