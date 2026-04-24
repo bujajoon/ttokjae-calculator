@@ -1,0 +1,10 @@
+{
+  "name": "ttokjae-finance-api",
+  "version": "1.0.0",
+  "description": "TTOKJAE Finance API",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.x"
+  }
+}
