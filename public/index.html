@@ -54,46 +54,48 @@ body {
   font-family: 'JetBrains Mono', monospace; margin-top: 2px;
 }
 .header-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.api-status {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 12px; color: var(--text-dim);
-  padding: 6px 12px; border-radius: 8px;
-  background: var(--bg-card); border: 1px solid var(--border);
-}
-.api-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--text-mute); transition: background 0.3s;
-}
-.api-dot.ok { background: var(--green); box-shadow: 0 0 8px var(--green); }
-.api-dot.err { background: var(--red); }
 
-/* API SETUP */
-.api-setup {
-  background: linear-gradient(135deg, rgba(244, 196, 48, 0.08), rgba(78, 205, 196, 0.05));
-  border: 1px solid var(--gold);
-  border-radius: 14px;
-  padding: 16px 20px;
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+/* 외부 링크 버튼 (헤더) */
+.external-link-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600; font-size: 12px;
+  transition: all 0.15s;
+  white-space: nowrap;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-dim);
 }
-.api-setup.configured {
-  background: var(--mint-soft);
+.external-link-btn:hover {
+  transform: translateY(-1px);
   border-color: var(--mint);
+  color: var(--mint);
 }
-.api-setup-text { flex: 1; min-width: 200px; }
-.api-setup-text strong { color: var(--gold); }
-.api-setup.configured .api-setup-text strong { color: var(--mint); }
-.api-setup-text p { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
-.api-setup input {
-  flex: 1; min-width: 220px;
-  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-  padding: 10px 14px; color: var(--text);
-  font-family: 'JetBrains Mono', monospace; font-size: 13px; outline: none;
+.external-link-btn.yt:hover {
+  background: rgba(255, 0, 0, 0.1);
+  border-color: #ff3030;
+  color: #ff5050;
 }
-.api-setup input:focus { border-color: var(--mint); }
+.external-link-btn.cafe:hover {
+  background: rgba(3, 199, 90, 0.1);
+  border-color: #03c75a;
+  color: #03c75a;
+}
+.external-link-btn .ext-icon { font-size: 14px; }
+.external-link-btn .ext-icon-svg {
+  width: 18px; height: 18px;
+  flex-shrink: 0;
+}
+.cta-card .cta-icon svg {
+  width: 36px; height: 36px;
+  display: block;
+}
+@media (max-width: 700px) {
+  .external-link-btn .ext-label { display: none; }
+  .external-link-btn { padding: 7px 9px; }
+}
 
 /* CARD */
 .card {
@@ -622,8 +624,15 @@ body {
 
 /* GUIDE */
 .guide-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
+}
+@media (max-width: 900px) {
+  .guide-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .guide-grid { grid-template-columns: 1fr; }
 }
 .guide-card {
   background: var(--bg-elevated); border-radius: 10px;
@@ -655,6 +664,81 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* 외부 링크 CTA 섹션 */
+.external-cta {
+  margin: 32px 0 12px;
+  padding: 24px;
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.cta-title {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 18px;
+  letter-spacing: -0.2px;
+}
+.cta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+.cta-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.cta-card:hover {
+  border-color: var(--mint);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(78, 205, 196, 0.15);
+}
+.cta-card.cta-youtube:hover {
+  border-color: #ff5050;
+  box-shadow: 0 6px 20px rgba(255, 80, 80, 0.2);
+}
+.cta-card.cta-cafe:hover {
+  border-color: #03c75a;
+  box-shadow: 0 6px 20px rgba(3, 199, 90, 0.2);
+}
+.cta-icon {
+  width: 36px; height: 36px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.cta-content { flex: 1; min-width: 0; }
+.cta-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.cta-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.cta-arrow {
+  font-size: 20px;
+  color: var(--text-mute);
+  transition: all 0.2s;
+}
+.cta-card:hover .cta-arrow {
+  color: var(--mint);
+  transform: translateX(4px);
+}
+.cta-card.cta-youtube:hover .cta-arrow { color: #ff5050; }
+.cta-card.cta-cafe:hover .cta-arrow { color: #03c75a; }
+
 .footer {
   text-align: center; padding: 30px 20px 20px;
   color: var(--text-mute); font-size: 12px; line-height: 1.8;
@@ -674,23 +758,21 @@ body {
     </div>
   </div>
   <div class="header-right">
-    <div class="api-status">
-      <span class="api-dot" id="api-dot"></span>
-      <span id="api-status-text">API 미연결</span>
-    </div>
+    <a href="https://www.youtube.com/@ttok_jae" class="external-link-btn yt" target="_blank" rel="noopener" title="똑재TV 유튜브">
+      <svg class="ext-icon-svg" viewBox="0 0 24 24" fill="#FF0000" xmlns="http://www.w3.org/2000/svg">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      </svg>
+      <span class="ext-label">똑재TV</span>
+    </a>
+    <a href="https://cafe.naver.com/ttokjae" class="external-link-btn cafe" target="_blank" rel="noopener" title="부의자유 카페">
+      <svg class="ext-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" rx="4" fill="#03C75A"/>
+        <path d="M14.97 12.71L9.65 5h-4.4v14h4.78V11.29L15.35 19h4.4V5h-4.78v7.71z" fill="#fff"/>
+      </svg>
+      <span class="ext-label">부의자유 카페</span>
+    </a>
     <div class="mono" id="todayDate" style="color:var(--text-mute);font-size:13px;"></div>
   </div>
-</div>
-
-<!-- API URL SETUP -->
-<div class="api-setup" id="api-setup">
-  <div class="api-setup-text">
-    <strong id="api-setup-title">🔧 API 서버 URL 연결 필요</strong>
-    <p>로컬 테스트: http://localhost:3000 / Vercel 배포: https://your-project.vercel.app</p>
-  </div>
-  <input type="text" id="api-url-input" placeholder="http://localhost:3000" />
-  <button class="btn" id="api-save-btn">연결</button>
-  <button class="btn-ghost btn" id="api-test-btn">테스트</button>
 </div>
 
 <!-- MACRO INDICATORS (4 in one block) -->
@@ -819,8 +901,12 @@ body {
         🔀 비교
       </button>
       <button class="btn-ghost btn" id="export-csv-btn" title="CSV 파일로 다운로드">
-        📥 CSV
+        📥 내보내기
       </button>
+      <button class="btn-ghost btn" id="import-csv-btn" title="CSV 파일에서 히스토리 복원">
+        📤 가져오기
+      </button>
+      <input type="file" id="import-csv-file" accept=".csv" style="display:none;" />
       <button class="btn-ghost btn" id="clear-history-btn" title="전체 기록 삭제" style="color:var(--red);">
         🗑️
       </button>
@@ -1102,6 +1188,38 @@ body {
 
 </div>
 
+<!-- 외부 링크 CTA 섹션 -->
+<div class="external-cta">
+  <div class="cta-title">💎 더 깊이 있는 투자 인사이트</div>
+  <div class="cta-grid">
+    <a href="https://www.youtube.com/@ttok_jae" class="cta-card cta-youtube" target="_blank" rel="noopener">
+      <div class="cta-icon">
+        <svg viewBox="0 0 24 24" fill="#FF0000" xmlns="http://www.w3.org/2000/svg">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+      </div>
+      <div class="cta-content">
+        <div class="cta-name">똑재TV</div>
+        <div class="cta-desc">매주 새로운 투자 전략 영상</div>
+      </div>
+      <div class="cta-arrow">→</div>
+    </a>
+    <a href="https://cafe.naver.com/ttokjae" class="cta-card cta-cafe" target="_blank" rel="noopener">
+      <div class="cta-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <rect width="24" height="24" rx="4" fill="#03C75A"/>
+          <path d="M14.97 12.71L9.65 5h-4.4v14h4.78V11.29L15.35 19h4.4V5h-4.78v7.71z" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="cta-content">
+        <div class="cta-name">부의자유 카페</div>
+        <div class="cta-desc">실시간 투자 토론과 정보 공유</div>
+      </div>
+      <div class="cta-arrow">→</div>
+    </a>
+  </div>
+</div>
+
 <div class="footer">
   <div style="margin-bottom:10px;"><b>똑재</b> · 평생 월 300만원 현금흐름 만드는 포트폴리오 완성반</div>
   <div class="disclaimer">
@@ -1256,33 +1374,6 @@ async function apiCall(path, timeoutMs = 15000) {
     clearTimeout(timeoutId);
     if (e.name === 'AbortError') throw new Error('서버 응답 시간 초과 (15초)');
     throw e;
-  }
-}
-
-async function testApiConnection(url) {
-  try {
-    const res = await fetch(url.replace(/\/+$/, '') + '/api/macros');
-    if (!res.ok) return false;
-    const data = await res.json();
-    return data && (data.vix !== undefined || data.cnnFearGreed !== undefined);
-  } catch(e) { return false; }
-}
-
-function updateApiStatus(isConnected) {
-  const dot = document.getElementById('api-dot');
-  const txt = document.getElementById('api-status-text');
-  const setup = document.getElementById('api-setup');
-  const title = document.getElementById('api-setup-title');
-  if (isConnected) {
-    dot.className = 'api-dot ok';
-    txt.textContent = 'API 연결됨';
-    setup.classList.add('configured');
-    title.innerHTML = '✅ API 연결 완료';
-  } else {
-    dot.className = 'api-dot ' + (state.apiUrl ? 'err' : '');
-    txt.textContent = state.apiUrl ? 'API 오류' : 'API 미연결';
-    setup.classList.remove('configured');
-    title.textContent = '🔧 API 서버 URL 연결 필요';
   }
 }
 
@@ -2223,6 +2314,152 @@ function exportCSV() {
   showToast(`📥 ${history.length}개 스냅샷 CSV 다운로드`);
 }
 
+// CSV 파싱 (간단한 파서 - BOM, 따옴표 처리)
+function parseCSV(text) {
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  const lines = [];
+  let currentLine = [];
+  let currentField = '';
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    const next = text[i + 1];
+    if (inQuotes) {
+      if (c === '"' && next === '"') { currentField += '"'; i++; }
+      else if (c === '"') inQuotes = false;
+      else currentField += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ',') { currentLine.push(currentField); currentField = ''; }
+      else if (c === '\n') { currentLine.push(currentField); lines.push(currentLine); currentLine = []; currentField = ''; }
+      else if (c === '\r') {/* skip */}
+      else currentField += c;
+    }
+  }
+  if (currentField || currentLine.length > 0) {
+    currentLine.push(currentField);
+    lines.push(currentLine);
+  }
+  return lines;
+}
+
+// CSV 가져오기 (히스토리 복원)
+async function importCSV(file) {
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const rows = parseCSV(text);
+    
+    if (rows.length < 2) {
+      showToast('CSV 파일이 비어있거나 형식이 잘못됐습니다', true);
+      return;
+    }
+    
+    const header = rows[0];
+    const expectedHeaderStart = ['날짜', '시간', '타입'];
+    if (!expectedHeaderStart.every((h, i) => header[i] === h)) {
+      showToast('호환되지 않는 CSV 형식입니다 (똑재 계산기에서 내보낸 파일이어야 함)', true);
+      return;
+    }
+    
+    const idx = {
+      date: 0, time: 1, type: 2, note: 3,
+      vix: 4, cnnFG: 5, vkospi: 6, kospiFG: 7,
+      group: 8, ticker: 9, name: 10,
+      price: 11, rsi: 12, low52w: 13, high52w: 14,
+      holdings: 15, score: 16, signal: 17,
+    };
+    
+    const snapshotMap = new Map();
+    
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (!r[idx.date]) continue;
+      
+      const key = `${r[idx.date]}_${r[idx.time]}_${r[idx.type]}_${r[idx.note] || ''}`;
+      
+      if (!snapshotMap.has(key)) {
+        const dateStr = `${r[idx.date]}T${r[idx.time]}:00`;
+        const dateObj = new Date(dateStr);
+        const dateKey = r[idx.date];
+        
+        snapshotMap.set(key, {
+          id: dateObj.getTime() + Math.random() * 100,
+          date: dateObj.toISOString(),
+          dateKey,
+          type: r[idx.type] === '자동' ? 'auto' : 'manual',
+          note: r[idx.note] || '',
+          macros: {
+            vix: r[idx.vix] ? Number(r[idx.vix]) : null,
+            cnnFG: r[idx.cnnFG] ? Number(r[idx.cnnFG]) : null,
+            vkospi: r[idx.vkospi] ? Number(r[idx.vkospi]) : null,
+            kospiFG: r[idx.kospiFG] ? Number(r[idx.kospiFG]) : null,
+          },
+          tickers: [],
+        });
+      }
+      
+      if (r[idx.ticker]) {
+        const groupMap = { US: 'us', INTL: 'intl', KR: 'kr' };
+        const snap = snapshotMap.get(key);
+        snap.tickers.push({
+          ticker: r[idx.ticker],
+          name: r[idx.name] || r[idx.ticker],
+          group: groupMap[r[idx.group]] || 'us',
+          price: r[idx.price] ? Number(r[idx.price]) : null,
+          rsi: r[idx.rsi] ? Number(r[idx.rsi]) : null,
+          high52w: r[idx.high52w] ? Number(r[idx.high52w]) : null,
+          low52w: r[idx.low52w] ? Number(r[idx.low52w]) : null,
+          holdings: r[idx.holdings] ? Number(r[idx.holdings]) : 0,
+          score: r[idx.score] ? Number(r[idx.score]) : null,
+        });
+      }
+    }
+    
+    const importedSnapshots = Array.from(snapshotMap.values());
+    if (importedSnapshots.length === 0) {
+      showToast('가져올 데이터가 없습니다', true);
+      return;
+    }
+    
+    // 중복 체크 (날짜+타입 기준)
+    const existingKeys = new Set(history.map(h => `${h.dateKey}_${h.type}`));
+    const newSnapshots = importedSnapshots.filter(s => 
+      !existingKeys.has(`${s.dateKey}_${s.type}`)
+    );
+    const duplicates = importedSnapshots.length - newSnapshots.length;
+    
+    if (newSnapshots.length === 0) {
+      showToast(`모두 중복됨 (${duplicates}개) - 새로 추가할 항목 없음`, true);
+      return;
+    }
+    
+    const confirmMsg = duplicates > 0
+      ? `${importedSnapshots.length}개 중 ${newSnapshots.length}개 추가됩니다.\n(${duplicates}개는 기존 항목과 중복되어 제외)\n\n계속할까요?`
+      : `${newSnapshots.length}개 스냅샷을 가져옵니다.\n계속할까요?`;
+    
+    if (!confirm(confirmMsg)) return;
+    
+    history.push(...newSnapshots);
+    history.sort((a, b) => a.id - b.id);
+    
+    if (history.length > MAX_HISTORY) {
+      const removed = history.length - MAX_HISTORY;
+      history = history.slice(-MAX_HISTORY);
+      saveHistory();
+      renderHistory();
+      showToast(`✅ ${newSnapshots.length}개 추가됨 (오래된 ${removed}개 자동 삭제)`);
+    } else {
+      saveHistory();
+      renderHistory();
+      showToast(`✅ ${newSnapshots.length}개 스냅샷 가져오기 완료`);
+    }
+  } catch (err) {
+    console.error(err);
+    showToast(`CSV 읽기 실패: ${err.message}`, true);
+  }
+}
+
 // 히스토리 목록 렌더링
 function renderHistory() {
   const section = document.getElementById('history-section');
@@ -2361,6 +2598,65 @@ async function refreshMacro(key) {
     showToast(`${key} 업데이트 완료`);
   } catch(e) {
     showToast(`업데이트 실패: ${e.message}`, true);
+  }
+}
+
+// 페이지 진입 시 자동 호출 - 매크로만 가볍게 갱신 (종목은 갱신 안 함)
+async function autoLoadMacrosOnEntry() {
+  if (!getApiUrl()) return;
+  try {
+    // 1. 매크로 지표 (VIX, CNN F&G, VKOSPI) - 백그라운드로
+    const macros = await apiCall('/api/macros').catch(() => null);
+    if (macros) {
+      if (macros.vix) { 
+        state.vix = macros.vix.value; 
+        document.getElementById('vix').value = macros.vix.value;
+        document.getElementById('vix-interpret').innerHTML = interpretVix(macros.vix.value);
+      }
+      if (macros.cnnFearGreed) { 
+        state['cnn-fg'] = macros.cnnFearGreed.value; 
+        document.getElementById('cnn-fg').value = macros.cnnFearGreed.value;
+        document.getElementById('cnn-fg-interpret').innerHTML = interpretFG(macros.cnnFearGreed.value);
+      }
+      if (macros.vkospi) { 
+        state.vkospi = macros.vkospi.value; 
+        document.getElementById('vkospi').value = macros.vkospi.value;
+        document.getElementById('vkospi-interpret').innerHTML = interpretVix(macros.vkospi.value);
+      }
+    }
+    
+    // 2. 똑재 공포탐욕지수 자동 산출
+    const fg = await apiCall('/api/ttokjae-fg').catch(() => null);
+    if (fg) {
+      if (fg.momentum != null) { state['fg-momentum'] = fg.momentum; }
+      if (fg.vkospi != null) { state['fg-vkospi'] = fg.vkospi; }
+      if (fg.rsi != null) { state['fg-rsi'] = fg.rsi; }
+      if (fg.foreign != null) { state['fg-foreign'] = fg.foreign; }
+      if (fg.highlow != null) { state['fg-highlow'] = fg.highlow; }
+      
+      const validScores = [
+        scoreMomentum(state['fg-momentum']),
+        scoreVkospiFG(state['fg-vkospi']),
+        scoreKospiRsi(state['fg-rsi']),
+        scoreForeign(state['fg-foreign']),
+        scoreHighLow(state['fg-highlow']),
+      ].filter(s => s != null);
+      
+      if (validScores.length >= 3) {
+        const avgFear = validScores.reduce((s, x) => s + x, 0) / validScores.length;
+        const ttokjaeFG = Math.round(100 - avgFear);
+        state['kospi-fg'] = ttokjaeFG;
+        document.getElementById('kospi-fg').value = ttokjaeFG;
+        document.getElementById('kospi-fg-interpret').innerHTML = interpretFG(ttokjaeFG);
+      }
+    }
+    
+    saveState();
+    renderGroups();
+    // 조용히 완료 (토스트 X) - 사용자가 인지 안 해도 됨
+  } catch(e) {
+    // 자동 로드 실패는 조용히 무시 (사용자가 수동 버튼 누르면 됨)
+    console.warn('자동 매크로 로드 실패:', e.message);
   }
 }
 
@@ -2592,25 +2888,6 @@ function setupMacroInput(id, stateKey, interpret) {
 
 document.getElementById('todayDate').textContent = new Date().toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit', weekday:'short' });
 
-// API URL
-const apiUrlInput = document.getElementById('api-url-input');
-if (state.apiUrl) { apiUrlInput.value = state.apiUrl; testApiConnection(state.apiUrl).then(updateApiStatus); }
-document.getElementById('api-save-btn').addEventListener('click', async () => {
-  const url = apiUrlInput.value.trim();
-  if (!url) return;
-  state.apiUrl = url;
-  saveState();
-  const ok = await testApiConnection(url);
-  updateApiStatus(ok);
-  showToast(ok ? 'API 연결 성공!' : 'API 연결 실패', !ok);
-});
-document.getElementById('api-test-btn').addEventListener('click', async () => {
-  const url = apiUrlInput.value.trim() || state.apiUrl;
-  if (!url) return showToast('URL을 먼저 입력하세요', true);
-  const ok = await testApiConnection(url);
-  showToast(ok ? '✅ 연결 성공' : '❌ 연결 실패', !ok);
-});
-
 // Macro inputs
 setupMacroInput('vix', 'vix', interpretVix);
 setupMacroInput('cnn-fg', 'cnn-fg', interpretFG);
@@ -2627,6 +2904,14 @@ document.getElementById('refresh-all-btn').addEventListener('click', refreshAll)
 document.getElementById('save-snapshot-btn').addEventListener('click', manualSaveSnapshot);
 document.getElementById('compare-mode-btn').addEventListener('click', toggleCompareMode);
 document.getElementById('export-csv-btn').addEventListener('click', exportCSV);
+document.getElementById('import-csv-btn').addEventListener('click', () => {
+  document.getElementById('import-csv-file').click();
+});
+document.getElementById('import-csv-file').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) importCSV(file);
+  e.target.value = '';
+});
 document.getElementById('clear-history-btn').addEventListener('click', clearHistory);
 
 // Weight sliders
@@ -2660,7 +2945,6 @@ setupDragDrop();
 // Initial render
 renderGuide();
 renderGroups();
-updateApiStatus(false);
 
 // FORCE render macro interpretations on load (fixes rare timing issues)
 (function forceInitialMacroRender() {
@@ -2678,6 +2962,12 @@ updateApiStatus(false);
     }
   });
 })();
+
+// 페이지 진입 시 매크로 자동 로드 (백그라운드, 0.5초 후)
+// 기존 저장된 값을 먼저 보여주고, 잠시 후 최신 값으로 덮어씀
+setTimeout(() => {
+  autoLoadMacrosOnEntry();
+}, 500);
 </script>
 </body>
 </html>
